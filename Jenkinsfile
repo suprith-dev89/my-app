@@ -32,6 +32,7 @@ pipeline {
 
         stage('Docker Build') {
              steps {
+                sh 'pwd'
                 sh 'docker build -t $registry .'
              }
         }
