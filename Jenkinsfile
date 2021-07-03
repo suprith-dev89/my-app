@@ -31,13 +31,13 @@ pipeline {
             }
         }
 
-        stage('Docker Push') {
-                script { 
-                    docker.withRegistry( '', registryCredential ) { 
-                        dockerImage.push() 
-                    }
-                }
-        }
+        // stage('Docker Push') {
+        //         script { 
+        //             docker.withRegistry( '', registryCredential ) { 
+        //                 dockerImage.push() 
+        //             }
+        //         }
+        // }
     }
     post {
         always {
