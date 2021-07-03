@@ -3,8 +3,9 @@ pipeline {
     agent any 
 
     environment {
-        DOCKERHUB_CRED = credentials('DOCKER_HUB_CRED')
-        REGISTRY_NAME = "supoodocker/my-app"
+        registryCredential = 'DOCKER_HUB_CRED'
+        registry = "supoodocker/my-app"
+        dockerImage = ''
     }
 
     stages {
@@ -18,22 +19,24 @@ pipeline {
             }
         }
 
-        stage('Docker Login') {
-            steps {  
-               sh 'docker login --username $DOCKERHUB_CRED_USR --password-stdin'
-            }
-        }
+        // stage('Docker Login') {
+        //     steps {  
+        //        sh 'docker login --username $DOCKERHUB_CRED_USR --password-stdin'
+        //     }
+        // }
 
         stage('Docker Build') {
-            steps {  
-               sh 'docker build -t $REGISTRY_NAME .'
+            script { 
+                    dockerImage = docker.build registry + ":$BUILD_NUMBER" 
             }
         }
 
         stage('Docker Push') {
-            steps {  
-               sh 'docker push $REGISTRY_NAME:latest'
-            }
+                script { 
+                    docker.withRegistry( '', registryCredential ) { 
+                        dockerImage.push() 
+                    }
+                }
         }
     }
     post {
