@@ -5,9 +5,9 @@ pipeline {
         stage('build') {
             steps {  
                 dir("app") {
-                    echo "Build Started"
-                    sh "gradle build"
-                    echo "Build Completed"
+                     withGradle {
+                        sh './gradlew build'
+                    }
                 }
             }
         }
