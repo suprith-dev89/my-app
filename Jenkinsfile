@@ -6,7 +6,7 @@ pipeline {
             steps {  
                 dir("app") {
                     echo "Build Started"
-                    sh "./gradlew -g /cache build"
+                    sh "gradle build"
                     echo "Build Completed"
                 }
             }
