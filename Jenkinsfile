@@ -1,11 +1,6 @@
 
 pipeline {
-    agent {
-        docker {
-            image 'node:14-alpine'
-            args '-v $HOME:/home/jenkins'
-        }
-    } 
+    agent any
 
     environment {
         registryCredential = 'DOCKER_HUB_CRED'
