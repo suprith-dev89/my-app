@@ -36,7 +36,7 @@ pipeline {
             steps {
                 withDockerRegistry([ credentialsId: registryCredential, url: "" ]) {
                     sh 'docker push $registry:latest'
-                    sh 'docker push $registry + ":$BUILD_NUMBER"'
+                    sh 'docker push $registry:$BUILD_NUMBER'
                 }
             }
         }
