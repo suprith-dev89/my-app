@@ -30,6 +30,7 @@ pipeline {
         }
 
         stage('Docker Push') {
+            steps {
                 script { 
                     docker.withRegistry( '', registryCredential ) { 
                         //dockerImage.push() 
@@ -37,6 +38,7 @@ pipeline {
                         dockerImage.push("latest")  
                     }
                 } 
+            }
         }
     }
     // post {
