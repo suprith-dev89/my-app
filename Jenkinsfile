@@ -24,7 +24,7 @@ pipeline {
                  dir("app") {
                     //  sh 'pwd'
                     //  sh 'docker build -t $registry:latest .'
-                    dockerImage = docker.build registry + ":$BUILD_NUMBER" 
+                    $dockerImage = docker.build $registry + ":$BUILD_NUMBER" 
                  }  
              }
         }
@@ -32,7 +32,7 @@ pipeline {
         stage('Docker Push') {
             steps {
                 script { 
-                    docker.withRegistry( '', registryCredential ) { 
+                    docker.withRegistry( '', $registryCredential ) { 
                         //dockerImage.push() 
                         dockerImage.push($BUILD_NUMBER)            
                         dockerImage.push("latest")  
