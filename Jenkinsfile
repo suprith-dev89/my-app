@@ -21,8 +21,10 @@ pipeline {
 
         stage('Docker Build') {
              steps {
-                sh 'pwd'
-                sh 'docker build -t $registry:latest .'
+                 dir("app") {
+                     sh 'pwd'
+                     sh 'docker build -t $registry:latest .'
+                 }  
              }
         }
 
