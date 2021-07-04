@@ -22,19 +22,22 @@ pipeline {
         stage('Docker Build') {
              steps {
                  dir("app") {
-                     sh 'pwd'
-                     sh 'docker build -t $registry:latest .'
+                    //  sh 'pwd'
+                    //  sh 'docker build -t $registry:latest .'
+                    dockerImage = docker.build registry + ":$BUILD_NUMBER" 
                  }  
              }
         }
 
-        // stage('Docker Push') {
-        //         script { 
-        //             docker.withRegistry( '', registryCredential ) { 
-        //                 dockerImage.push() 
-        //             }
-        //         }
-        // }
+        stage('Docker Push') {
+                script { 
+                    docker.withRegistry( '', registryCredential ) { 
+                        //dockerImage.push() 
+                        dockerImage.push($BUILD_NUMBER)            
+                        dockerImage.push("latest")  
+                    }
+                } 
+        }
     }
     // post {
     //     always {
