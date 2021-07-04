@@ -30,9 +30,9 @@ pipeline {
         }
 
         stage('Docker Push') {
-            when {
-                branch 'main'
-            }
+            // when {
+            //     branch 'main'
+            // }
             steps {
                 withDockerRegistry([ credentialsId: registryCredential, url: "" ]) {
                     sh 'docker push $registry:latest'
