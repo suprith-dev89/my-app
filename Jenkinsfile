@@ -3,9 +3,14 @@ pipeline {
     agent any
 
     environment {
-        registryCredential = 'DOCKER_HUB_CRED'
-        registry = "supoodocker/my-app"
-        dockerImage = ''
+        //DockerHub
+        REGISTRY_CRED = 'DOCKER_HUB_CRED'
+        REGISTRY_NAME = "supoodocker/my-app"
+        //GKE
+        GKE_PROJECT_ID = "rosy-sunspot-318805"
+        GKE_CLUSTER_NAME = "ssk-cluster-1"
+        GKE_LOCATION = "us-central1-c"
+        GKE_CREDENTIALS_ID = 'gke'
     }
 
     stages {
@@ -22,28 +27,28 @@ pipeline {
         stage('Docker Build') {
              steps {
                  dir("app") {
-                    //  sh 'pwd'
-                     sh 'docker build -t $registry:latest .'
-                     sh 'docker build -t $registry:$BUILD_NUMBER .'
+                     sh 'docker build -t $REGISTRY_NAME:latest .'
+                     sh 'docker build -t $REGISTRY_NAME:$BUILD_NUMBER .'
                  }  
              }
         }
 
         stage('Docker Push') {
-            // when {
-            //     branch 'main'
-            // }
             steps {
-                withDockerRegistry([ credentialsId: registryCredential, url: "" ]) {
-                    sh 'docker push $registry:latest'
-                    sh 'docker push $registry:$BUILD_NUMBER'
+                withDockerRegistry([ credentialsId: REGISTRY_CRED, url: "" ]) {
+                    sh 'docker push $REGISTRY_NAME:latest'
+                    sh 'docker push $REGISTRY_NAME:$BUILD_NUMBER'
                 }
             }
         }
+
+        stage('Deploy to GKE') {
+            steps{
+                sh "sed -i 's/$REGISTRY_NAME:latest/$REGISTRY_NAME:$BUILD_NUMBER/g' deployment.yaml"
+                step([$class: 'KubernetesEngineBuilder', projectId: env.GKE_PROJECT_ID, clusterName: env.GKE_CLUSTER_NAME, 
+                location: GKE_LOCATION, manifestPattern: 'deployment.yaml', credentialsId: env.GKE_CREDENTIALS_ID, 
+                verifyDeployments: true])
+            }
+        }
     }
-    // post {
-    //     always {
-    //         sh 'docker logout'
-    //     }
-    // }
 }

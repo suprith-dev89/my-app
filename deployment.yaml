@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-app
+  namespace: default
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: my-app
+  template:
+    metadata:
+      labels:
+        app: my-app
+    spec:
+      containers:
+      - name: my-app
+        image: supoodocker/my-app:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+          name: server
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-app
+  namespace: default
+  labels:
+    app: my-app
+spec:
+  type: ClusterIP
+  ports:
+  - name: client
+    port: 8080
+    targetPort: 8080
+    protocol: TCP
+  selector:
+    app: my-app
