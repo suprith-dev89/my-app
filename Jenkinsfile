@@ -24,7 +24,7 @@ pipeline {
                  dir("app") {
                     //  sh 'pwd'
                      sh 'docker build -t $registry:latest .'
-                     sh 'docker build -t $registry + ":$BUILD_NUMBER" .'
+                     sh 'docker build -t $registry:$BUILD_NUMBER .'
                  }  
              }
         }
