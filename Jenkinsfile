@@ -44,12 +44,20 @@ pipeline {
 
         stage('Deploy to GKE') {
             steps{
-                sh 'pwd'
-                //sh "sed -i 's/$REGISTRY_NAME:latest/$REGISTRY_NAME:$BUILD_NUMBER/g' deployment.yaml"
-                step([$class: 'KubernetesEngineBuilder', projectId: env.GKE_PROJECT_ID, clusterName: env.GKE_CLUSTER_NAME, 
-                location: GKE_LOCATION, manifestPattern: 'deployment.yaml', credentialsId: env.GKE_CREDENTIALS_ID, 
-                verifyDeployments: false])
+                withCredentials([file(credentialsId: "${GKE_CREDENTIALS_ID}", variable: 'JENKINSGCLOUDCREDENTIAL')])
+                {
+                    sh """
+                        gcloud auth activate-service-account --key-file=${JENKINSGCLOUDCREDENTIAL}
+                        gcloud config set compute/zone asia-southeast1-a
+                        gcloud config set compute/region asia-southeast1
+                        gcloud config set project ${GKE_PROJECT_ID}
+                        gcloud container clusters get-credentials ${GKE_CLUSTER_NAME}
+
+                        kubectl get pods
+
+                        gcloud auth revoke --all
+                        """
+                }
             }
-        }
     }
 }
