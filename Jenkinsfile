@@ -13,7 +13,7 @@ pipeline {
             steps {  
                 dir("app") {
                      withGradle {
-                        sh './gradlew build'
+                        sh './gradlew -g /cache build'
                     }
                 }
             }
